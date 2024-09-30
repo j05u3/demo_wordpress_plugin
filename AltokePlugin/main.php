@@ -19,7 +19,6 @@
  * License URI: https://opensource.org/licenses/BSD-3-Clause
  */
 
-// AJAX
 add_action("wp_ajax_altoke_get_user_profile", "altoke_get_user_profile_function");
 add_action("wp_ajax_nopriv_altoke_get_user_profile", "altoke_get_user_profile_function");
 
@@ -37,7 +36,10 @@ function altoke_get_user_profile_function()
   // use wp_get_current_user to get the user name
   $userName = wp_get_current_user()->user_login;
 
+  $someInput = $_POST['some_input'];
+
   wp_send_json_success(array(
-    'userName' => $userName,
+    'user_name' => $userName,
+    'some_input' => $someInput,
   ));
 }
