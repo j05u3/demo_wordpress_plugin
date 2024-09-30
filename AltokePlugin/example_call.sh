@@ -1,0 +1,16 @@
+curl 'https://altoqueperuwk.com/wp-admin/admin-ajax.php' \
+  -H 'accept: /' \
+  -H 'accept-language: en,en-US;q=0.9,es-PE;q=0.8,es-419;q=0.7,es;q=0.6' \
+  -H 'content-type: application/x-www-form-urlencoded' \
+  -H 'cookie: wordpress_sec_c9d29c41f3ca2a7d6f345e19723b3441=john9jcg%40gmail.com%7C1728857443%7CSqeRhm7nQi1MZr0S3GBnBGDHsIpcZYDn1AF99wVkFBS%7C8ec82ba9142fbb74175ffcaf3232c7e58ae000ef40731dbbe5c482ef2bb2cca9; wordpress_test_cookie=WP%20Cookie%20check; wordpress_logged_in_c9d29c41f3ca2a7d6f345e19723b3441=john9jcg%40gmail.com%7C1728857443%7CSqeRhm7nQi1MZr0S3GBnBGDHsIpcZYDn1AF99wVkFBS%7Cff06900d027aa809f18a44fd3387b0b12f69bdd032e7f73413b795b81b182ef4; wp-settings-1=editor%3Dtinymce%26libraryContent%3Dbrowse; wp-settings-time-1=1727647843' \
+  -H 'origin: https://altoqueperuwk.com' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://altoqueperuwk.com/wp-admin/' \
+  -H 'sec-ch-ua: "Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "macOS"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36' \
+  --data-raw 'action=altoke_get_user_profile
