@@ -28,18 +28,16 @@ function altoke_get_user_profile_function()
   // Verify nonce for security
   // check_ajax_referer('altoke_user_profile_nonce', 'nonce');
 
-  // Get user profile
-  // $user_profile = get_user_profile();
-
   // Example error handling
   // if (/* some error condition */) {
   //     wp_send_json_error(array('message' => 'An error occurred'));
   //     return;
   // }
 
-  // wordpress php functions
+  // use wp_get_current_user to get the user name
+  $userName = wp_get_current_user()->user_login;
 
   wp_send_json_success(array(
-    'data' => "test",
+    'userName' => $userName,
   ));
 }
