@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload Example</title>
+</head>
+<body>
+    <h1>Image Upload</h1>
+    <input type="file" id="imageInput" accept="image/*">
+    <button onclick="handleUpload()">Upload Image</button>
+
+    <script>
+        
+        const callWordpressAjax = async (dataMap) => {
+          const formData = new FormData();
+
+          // Append all dataMap items to formData
+          for (const [key, value] of Object.entries(dataMap)) {
+            formData.append(key, value);
+          }
+          return await (
+            await fetch("https://altoqueperuwk.com/wp-admin/admin-ajax.php", {
+              method: "POST",
+              body: formData,
+              credentials: "include",
+            })
+          ).json();
+        };
+
+        // Example usage for image upload
+        const uploadImage = async (file) => {
+          try {
+            const response = await callWordpressAjax({
+              action: "altoke_upload_image",
+              image: file,
+            });
+
+            if (response.success) {
+              console.log("Image uploaded successfully:", response.data);
+            } else {
+              console.error("Image upload failed:", response.data.message);
+            }
+          } catch (error) {
+            console.error("Error uploading image:", error);
+          }
+        };
+
+        async function handleUpload() {
+            const fileInput = document.getElementById('imageInput');
+            const file = fileInput.files[0];
+
+            if (file) {
+                await uploadImage(file);
+            } else {
+                alert('Please select an image to upload.');
+            }
+        }
+    </script>
+</body>
+</html>
