@@ -44,3 +44,4 @@ function get_user_data(WP_REST_Request $request) {
 
     return new WP_REST_Response($user_meta, 200);
 }
+
