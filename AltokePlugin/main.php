@@ -3,106 +3,44 @@
  * Altoke Plugin
  *
  * @package     AltokePlugin
- * @author      Team 1
- * @copyright   2024 Team 1
- * @license     BUSD
- *
  * @wordpress-plugin
  * Plugin Name: Altoke Plugin
- * Plugin URI:  https://mehdinazari.com/how-to-create-hello-world-plugin-for-wordpress
- * Description: Altoke Plugin
+ * Description: Altoke Plugin para gestionar datos y APIs REST.
  * Version:     1.0.1
  * Author:      Team 1
- * Author URI:  https://mehdinazari.com
- * Text Domain: hello-world
  * License:     BUSD
- * License URI: https://opensource.org/licenses/BSD-3-Clause
  */
-
-add_action("wp_ajax_altoke_get_user_profile", "altoke_get_user_profile_function");
-add_action("wp_ajax_nopriv_altoke_get_user_profile", "altoke_get_user_profile_function");
-
-function altoke_get_user_profile_function()
-{
-  // Verify nonce for security
-  // check_ajax_referer('altoke_user_profile_nonce', 'nonce');
-
-  // Example error handling
-  // if (/* some error condition */) {
-  //     wp_send_json_error(array('message' => 'An error occurred'));
-  //     return;
-  // }
-
-  // use wp_get_current_user to get the user name
-  $userName = wp_get_current_user()->user_login;
-
-  $someInput = $_POST['some_input'];
-
-  wp_send_json_success(array(
-    'user_name' => $userName,
-    'some_input' => $someInput,
-  ));
-}
-
-// add action to upload an image
-add_action("wp_ajax_altoke_upload_image", "altoke_upload_image_function");
-add_action("wp_ajax_nopriv_altoke_upload_image", "altoke_upload_image_function");
-
-function altoke_upload_image_function()
-{
-  // Verify nonce for security
-  // check_ajax_referer('altoke_upload_image_nonce', 'nonce');
-
-  if (!isset($_FILES['image'])) {
-    wp_send_json_error(array('message' => 'No image file provided'));
-    return;
-  }
-
-  $image = $_FILES['image'];
-
-  // Handle the image upload
-  require_once(ABSPATH . 'wp-admin/includes/image.php');
-  require_once(ABSPATH . 'wp-admin/includes/file.php');
-  require_once(ABSPATH . 'wp-admin/includes/media.php');
-
-  $attachment_id = media_handle_upload('image', 0);
-
-  if (is_wp_error($attachment_id)) {
-    wp_send_json_error(array('message' => $attachment_id->get_error_message()));
-  } else {
-    $attachment_url = wp_get_attachment_url($attachment_id);
-    wp_send_json_success(array('url' => $attachment_url, 'id' => $attachment_id));
-  }
-}
 
 // Registrar la ruta REST API
 add_action('rest_api_init', function () {
-  register_rest_route('custom/v1', '/get-user-data', array(
-      'methods' => 'GET',
-      'callback' => 'get_user_data',
-      'permission_callback' => '__return_true', // Cambiar si necesitas restricciones
-  ));
+    error_log('Registrando la ruta REST: /custom/v1/get-user-data');
+    register_rest_route('custom/v1', '/get-user-data', array(
+        'methods' => 'GET',
+        'callback' => 'get_user_data',
+        'permission_callback' => '__return_true',
+    ));
 });
 
 // Callback para la API REST
 function get_user_data(WP_REST_Request $request) {
-  // Obtener el usuario actual
-  $current_user = wp_get_current_user();
+    error_log('Ejecutando el callback para /custom/v1/get-user-data');
+    $current_user = wp_get_current_user();
 
-  if ($current_user->ID === 0) {
-      // Respuesta si el usuario no está logueado
-      return new WP_REST_Response(['error' => 'User not logged in'], 401);
-  }
+    if ($current_user->ID === 0) {
+        error_log('El usuario no está logueado');
+        return new WP_REST_Response(['error' => 'User not logged in'], 401);
+    }
 
-  // Recuperar datos del usuario
-  $user_meta = [
-      'nombre_apellido' => $current_user->user_login, // Meta Key: user_login
-      'correo' => $current_user->user_email, // Meta Key: user_email
-      'dni' => get_user_meta($current_user->ID, 'dniNumber', true), // Meta Key: dniNumber
-      'whatsapp' => get_user_meta($current_user->ID, 'numberPhone', true), // Meta Key: numberPhone
-      'codigo_promocional' => get_user_meta($current_user->ID, 'codigoPromocional', true), // Meta Key: codigoPromocional
-  ];
+    // Recuperar datos del usuario
+    $user_meta = [
+        'nombre_apellido' => $current_user->user_login,
+        'correo' => $current_user->user_email,
+        'dni' => get_user_meta($current_user->ID, 'dniNumber', true),
+        'whatsapp' => get_user_meta($current_user->ID, 'numberPhone', true),
+        'codigo_promocional' => get_user_meta($current_user->ID, 'codigoPromocional', true),
+    ];
 
-  // Responder con los datos en formato JSON
-  return new WP_REST_Response($user_meta, 200);
+    error_log('Datos del usuario recuperados: ' . print_r($user_meta, true));
+
+    return new WP_REST_Response($user_meta, 200);
 }
