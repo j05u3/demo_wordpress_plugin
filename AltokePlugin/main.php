@@ -74,7 +74,8 @@ function altoke_upload_image_function()
     wp_send_json_success(array('url' => $attachment_url, 'id' => $attachment_id));
   }
 }
-// Registrar la ruta REST API IA
+
+// Registrar la ruta REST API
 add_action('rest_api_init', function () {
   register_rest_route('custom/v1', '/get-user-data', array(
       'methods' => 'GET',
@@ -95,9 +96,11 @@ function get_user_data(WP_REST_Request $request) {
 
   // Recuperar datos del usuario
   $user_meta = [
-      'dni' => get_user_meta($current_user->ID, 'dni', true),
-      'whatsapp' => get_user_meta($current_user->ID, 'whatsapp', true),
-      'profile_picture' => get_user_meta($current_user->ID, 'profile_picture', true),
+      'nombre_apellido' => $current_user->user_login, // Meta Key: user_login
+      'correo' => $current_user->user_email, // Meta Key: user_email
+      'dni' => get_user_meta($current_user->ID, 'dniNumber', true), // Meta Key: dniNumber
+      'whatsapp' => get_user_meta($current_user->ID, 'numberPhone', true), // Meta Key: numberPhone
+      'codigo_promocional' => get_user_meta($current_user->ID, 'codigoPromocional', true), // Meta Key: codigoPromocional
   ];
 
   // Responder con los datos en formato JSON
