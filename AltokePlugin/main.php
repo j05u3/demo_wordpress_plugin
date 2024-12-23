@@ -74,3 +74,32 @@ function altoke_upload_image_function()
     wp_send_json_success(array('url' => $attachment_url, 'id' => $attachment_id));
   }
 }
+// Registrar la ruta REST API IA
+add_action('rest_api_init', function () {
+  register_rest_route('custom/v1', '/get-user-data', array(
+      'methods' => 'GET',
+      'callback' => 'get_user_data',
+      'permission_callback' => '__return_true', // Cambiar si necesitas restricciones
+  ));
+});
+
+// Callback para la API REST
+function get_user_data(WP_REST_Request $request) {
+  // Obtener el usuario actual
+  $current_user = wp_get_current_user();
+
+  if ($current_user->ID === 0) {
+      // Respuesta si el usuario no está logueado
+      return new WP_REST_Response(['error' => 'User not logged in'], 401);
+  }
+
+  // Recuperar datos del usuario
+  $user_meta = [
+      'dni' => get_user_meta($current_user->ID, 'dni', true),
+      'whatsapp' => get_user_meta($current_user->ID, 'whatsapp', true),
+      'profile_picture' => get_user_meta($current_user->ID, 'profile_picture', true),
+  ];
+
+  // Responder con los datos en formato JSON
+  return new WP_REST_Response($user_meta, 200);
+}
