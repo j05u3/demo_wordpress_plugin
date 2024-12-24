@@ -3,18 +3,11 @@
  * Altoke Plugin
  *
  * @package     AltokePlugin
- * @author      Team 1
- * @copyright   2024 Team 1
- * @license     BUSD
- *
  * @wordpress-plugin
  * Plugin Name: Altoke Plugin
- * Plugin URI:  https://mehdinazari.com/how-to-create-hello-world-plugin-for-wordpress
- * Description: Altoke Plugin
+ * Description: Altoke Plugin para gestionar datos y APIs REST.
  * Version:     1.0.1
  * Author:      Team 1
- * Author URI:  https://mehdinazari.com
- * Text Domain: hello-world
  * License:     BUSD
  * License URI: https://opensource.org/licenses/BSD-3-Clause
  */
