@@ -54,3 +54,11 @@ add_action('init', function () {
     echo '</pre>';
     die();
 });
+add_action('rest_api_init', function () {
+  register_rest_route('custom/v1', '/test-endpoint', array(
+      'methods' => 'GET',
+      'callback' => function () {
+          return new WP_REST_Response(['mensaje' => 'API funcionando correctamente'], 200);
+      },
+  ));
+});
