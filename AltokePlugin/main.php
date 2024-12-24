@@ -74,3 +74,32 @@ function altoke_upload_image_function()
     wp_send_json_success(array('url' => $attachment_url, 'id' => $attachment_id));
   }
 }
+
+add_action("wp_ajax_altoke_get_user_data", "altoke_get_user_data_function");
+add_action("wp_ajax_nopriv_altoke_get_user_data", "altoke_get_user_data_function");
+
+function altoke_get_user_data_function() {
+    // Get current user
+    $user = wp_get_current_user();
+    
+    if (!$user->exists()) {
+        wp_send_json_error(array('message' => 'User not logged in'));
+        return;
+    }
+
+    // Get user data using UM's functions
+    $user_id = $user->ID;
+    
+    // Note that this function uses WordPress's built-in get_user_meta() function 
+    // to retrieve the Ultimate Member custom fields, which should work fine since Ultimate Member stores its data in WordPress user meta.
+    $user_data = array(
+        'nombre_apellido' => $user->user_login,
+        'email' => $user->user_email,
+        'dni' => get_user_meta($user_id, 'dniNumber', true),
+        'whatsapp' => get_user_meta($user_id, 'numberPhone', true),
+        'codigo_promocional' => get_user_meta($user_id, 'codigoPromocional', true)
+    );
+
+    wp_send_json_success($user_data);
+}
+

@@ -37,4 +37,9 @@ callWordpressAjax({
   some_input: "some_value",
 });
 
+// Example call to get user data
+callWordpressAjax({
+    action: "altoke_get_user_data"
+});
+
 // add image upload call function
