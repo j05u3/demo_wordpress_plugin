@@ -45,3 +45,12 @@ function get_user_data(WP_REST_Request $request) {
     return new WP_REST_Response($user_meta, 200);
 }
 
+// Código para listar las rutas REST registradas (temporal)
+add_action('init', function () {
+    global $wp_rest_server;
+    $wp_rest_server = rest_get_server();
+    echo '<pre>';
+    print_r($wp_rest_server->get_routes());
+    echo '</pre>';
+    die();
+});
