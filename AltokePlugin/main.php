@@ -11,7 +11,7 @@
  * License:     BUSD
  */
 
-// Registrar la ruta REST API
+// Registrar la ruta REST API personalizada
 add_action('rest_api_init', function () {
     error_log('Registrando la ruta REST: /custom/v1/get-user-data');
     register_rest_route('custom/v1', '/get-user-data', array(
@@ -21,7 +21,7 @@ add_action('rest_api_init', function () {
     ));
 });
 
-// Callback para la API REST
+// Callback para la API REST personalizada
 function get_user_data(WP_REST_Request $request) {
     error_log('Ejecutando el callback para /custom/v1/get-user-data');
     $current_user = wp_get_current_user();
@@ -45,6 +45,18 @@ function get_user_data(WP_REST_Request $request) {
     return new WP_REST_Response($user_meta, 200);
 }
 
+// Filtro para personalizar la salida de Ultimate Member en la API REST
+add_filter('um_rest_userdata', 'personalizar_datos_rest', 10, 2);
+
+function personalizar_datos_rest($value, $user_id) {
+    // Agregar campos personalizados al resultado de la API REST de Ultimate Member
+    $value['dni'] = get_user_meta($user_id, 'dniNumber', true);
+    $value['whatsapp'] = get_user_meta($user_id, 'numberPhone', true);
+    $value['codigo_promocional'] = get_user_meta($user_id, 'codigoPromocional', true);
+
+    return $value;
+}
+
 // Código para listar las rutas REST registradas (temporal)
 add_action('init', function () {
     global $wp_rest_server;
@@ -54,11 +66,13 @@ add_action('init', function () {
     echo '</pre>';
     die();
 });
+
+// Ruta de prueba para verificar la funcionalidad básica
 add_action('rest_api_init', function () {
-  register_rest_route('custom/v1', '/test-endpoint', array(
-      'methods' => 'GET',
-      'callback' => function () {
-          return new WP_REST_Response(['mensaje' => 'API funcionando correctamente'], 200);
-      },
-  ));
+    register_rest_route('custom/v1', '/test-endpoint', array(
+        'methods' => 'GET',
+        'callback' => function () {
+            return new WP_REST_Response(['mensaje' => 'API funcionando correctamente'], 200);
+        },
+    ));
 });
