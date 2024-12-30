@@ -234,24 +234,89 @@ function altoke_guardar_cuentas_ahorro_function() {
         return;
     }
 
-    // Verificar si las cuentas fueron enviadas
+    // Verificar si las cuentas de ahorro fueron enviadas
     if (!isset($_POST['accounts'])) {
-        wp_send_json_error(array('message' => 'Faltan las cuentas de ahorro'));
+        wp_send_json_error(array('message' => 'No se han recibido las cuentas de ahorro'));
         return;
     }
 
     // Obtener las cuentas de ahorro
-    $accounts = $_POST['accounts'];
+    $accountsJson = stripslashes($_POST['accounts']);
+    $accounts = json_decode($accountsJson, true);
+    if (!$accounts) {
+        wp_send_json_error(array('message' => 'Error al decodificar las cuentas de ahorro'));
+        return;
+    }
+
+    error_log("Cuentas de ahorro recibidas: " . print_r($accounts, true));
 
     // Guardar las cuentas de ahorro en los metadatos del usuario
     $user_id = $user->ID;
 
     // Eliminar las cuentas anteriores antes de guardar las nuevas
-    delete_user_meta($user_id, 'accounts');
+    delete_user_meta($user_id, 'deposit_accounts'); // Actualizado para usar 'deposit_accounts'
 
     // Guardar las nuevas cuentas
-    update_user_meta($user_id, 'accounts', $accounts);
+    update_user_meta($user_id, 'deposit_accounts', $accounts); // Actualizado para usar 'deposit_accounts'
 
     // Enviar respuesta de éxito
     wp_send_json_success(array('message' => 'Cuentas de ahorro guardadas correctamente'));
+}
+add_action("wp_ajax_altoke_get_all_users_data", "altoke_get_all_users_data_function");
+add_action("wp_ajax_nopriv_altoke_get_all_users_data", "altoke_get_all_users_data_function");
+
+function altoke_get_all_users_data_function() {
+    $args = array(
+        'orderby' => 'ID',
+        'order' => 'DESC'
+    );
+    $users = get_users($args);
+    $users_data = [];
+
+    foreach ($users as $user) {
+        $user_id = $user->ID;
+        $users_data[] = array(
+            'id' => $user_id,
+            'nombre_apellido' => get_user_meta($user_id, 'nickname', true),
+            'dni' => get_user_meta($user_id, 'dniNumber', true) ?: 'No disponible',
+            'whatsapp' => get_user_meta($user_id, 'numberPhone', true) ?: 'No disponible'
+        );
+    }
+
+    wp_send_json_success($users_data);
+}
+add_action("wp_ajax_altoke_get_user_data_new", "altoke_get_user_data_function_new");
+add_action("wp_ajax_nopriv_altoke_get_user_data_new", "altoke_get_user_data_function_new");
+
+function altoke_get_user_data_function_new() {
+    // Obtener el ID del usuario desde la solicitud AJAX
+    $user_id = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
+
+    if ($user_id === 0) {
+        wp_send_json_error(array('message' => 'ID del usuario no proporcionado o no válido'));
+        return;
+    }
+
+    // Verificar si el usuario existe
+    $user = get_userdata($user_id);
+    
+    if (!$user) {
+        wp_send_json_error(array('message' => 'Usuario no encontrado'));
+        return;
+    }
+
+    // Obtener datos del usuario usando los meta campos de Ultimate Member
+    $user_data = array(
+        'nombre_apellido' => get_user_meta($user_id, 'nickname', true),
+        'email' => $user->user_email,
+        'dni' => get_user_meta($user_id, 'dniNumber', true) ?: 'No disponible',
+        'whatsapp' => get_user_meta($user_id, 'numberPhone', true) ?: 'No disponible',
+        'codigo_promocional' => get_user_meta($user_id,'codigoPromocional', true) ?: 'No disponible',
+        'dniFrontUrl' => get_user_meta($user_id, 'dniFrontUrl', true) ?: 'No disponible',
+        'dniBackUrl' => get_user_meta($user_id, 'dniBackUrl', true) ?: 'No disponible',
+        'profile_image_url' => get_user_meta($user_id, 'profile_image_url', true) ?: 'No disponible',
+        'card_images_urls' => get_user_meta($user_id, 'card_images_urls', true) ?: 'No disponible'
+    );
+
+    wp_send_json_success($user_data);
 }
